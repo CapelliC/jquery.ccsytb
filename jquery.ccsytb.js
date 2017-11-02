@@ -19,13 +19,17 @@
             options.trace('tbody_scroll', options, table)
 
         const $thead = $table.find('thead')
-        $thead.css({'display':'block'})
+        $thead.css({
+            'display':'block',
+            //'width':'100%',
+        })
 
         const $tbody = $table.find('tbody')
         $tbody.css({
             'display':'block',
             'overflow-y':'scroll',
-            'overflow-x':'hidden'
+            'overflow-x':'hidden',
+            //'width':'100%',
         })
     }
     
