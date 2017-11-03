@@ -33,23 +33,37 @@
         })
     }
     
-    // Adjust the width of thead cells when window resizes
+    // Adjust the width of cells when window resizes
     function adjust_header($table, options) {
-        const $bodyCells = $table.find('tbody tr:first').children()
+        
+        function get_widths(sel) {
+            const $cells = $table.find(sel).children()
+            return $cells.map(function() {
+                return $(this).width()
+            }).get()
+        }
 
-        // Get the tbody columns width array
-        const colWidth = $bodyCells.map(function() {
-            return $(this).width()
-        }).get()
+        // Get the columns width arrays
+        const cols = get_widths('tbody tr:first')
+        const head = get_widths('thead tr')
+        const wmax = cols.map((c, i) => Math.max(c, head[i]))
+        
+        //if (options.trace)
+            //options.trace('cols,head,wmax', cols, head, wmax)
 
-        if (options.trace)
-            options.trace('resize each', $table, colWidth)
+        function set_widths(sel) {
+            $table.find(sel).children().each(function(i, v) {
+                $(v).width(wmax[i])
+            })
+        }
+        set_widths('tbody tr:first')
+        set_widths('thead tr')
 
-        // Set the width of thead columns
+        /*/ Set the width of thead columns
         $table.find('thead tr').children().each(function(i, v) {
             $(v).width(colWidth[i])
         })
-
+        */
         const $tbody = $table.find('tbody')
 
         // this specify which container we should fill,
@@ -105,8 +119,35 @@
         }
     }
 
+    /*
+    $.fn.scrollYourTableBody = function(options) {
+        //var opts = [] //options ? options : {x:0} //jQuery.extend({}, options)
+        
+        ($this = $(this)).each(function() { fix_css($(this), opts) })
+
+        $(window).resize(function() {
+
+            $this.each(function() {
+                // Peek current table
+                adjust_header($(this), opts)
+            })
+            
+        }).resize() // Trigger resize handler
+
+        return $(this)
+    }
+    */
+    
     $.fn.ccsytb = function(options) {
-        ($this = $(this)).each(function() { fix_css($(this), options) })
+        ($this = $(this)).each(function() {
+            fix_css($(this), options)
+            if (options.resize_event)
+                $(this).on(options.resize_event, function() {
+                    if (options.trace)
+                        options.trace('on', options.resize_event, $(this))
+                    adjust_header($(this), options)
+                })
+        })
 
         $(window).resize(function() {
 
