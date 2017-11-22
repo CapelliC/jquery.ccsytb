@@ -16,12 +16,11 @@
     function fix_css($table, options) {
 
         if (options.trace)
-            options.trace('tbody_scroll', options, table)
+            options.trace('fix_css', $table, options)
 
         const $thead = $table.find('thead')
         $thead.css({
             'display':'block',
-            //'width':'100%',
         })
 
         const $tbody = $table.find('tbody')
@@ -29,7 +28,6 @@
             'display':'block',
             'overflow-y':'scroll',
             'overflow-x':'hidden',
-            //'width':'100%',
         })
     }
     
@@ -48,8 +46,8 @@
         const head = get_widths('thead tr')
         const wmax = cols.map((c, i) => Math.max(c, head[i]))
         
-        //if (options.trace)
-            //options.trace('cols,head,wmax', cols, head, wmax)
+        if (options.trace)
+            options.trace('cols,head,wmax', cols, head, wmax)
 
         function set_widths(sel) {
             $table.find(sel).children().each(function(i, v) {
@@ -59,54 +57,9 @@
         set_widths('tbody tr:first')
         set_widths('thead tr')
 
-        /*/ Set the width of thead columns
-        $table.find('thead tr').children().each(function(i, v) {
-            $(v).width(colWidth[i])
-        })
-        */
         const $tbody = $table.find('tbody')
 
-        // this specify which container we should fill,
-        /*/ after which element
-        if (options.parent && options.before) {
-            const parent = $(options.parent)
-            const before = $(options.before)
-            const target = $tbody
-
-            const wh = $(window).height()
-            if (options.trace)
-                options.trace('wh', wh)
-            
-            const ph = parent.height()
-            const pp = parent.position().top
-            if (options.trace)
-                options.trace('ph, pp', parent, ph, pp)
-            
-            const th = target.height()
-            const tp = target.position().top
-            if (options.trace)
-                options.trace('th, tp', target, th, tp)
-            
-            const bh = before.height()
-            const bp = before.position().top
-            if (options.trace)
-                options.trace('bh, bp', before, bh, bp)
-
-            var sumtop = 0 //target.position().top - bh
-            target.parents().each(function() {
-                sumtop += $(this).position().top
-                if (options.trace)
-                    options.trace('sumtop', this, sumtop)
-            })
-
-            const TH = $(window).height() - tp //.top sumtop - bh - bp
-            if (options.trace)
-                options.trace('TH', $tbody, TH)
-            $tbody.height(TH)
-        }
-        */
-        
-        // last resort, specify fixed height
+        // specified fixed height ?
         if (options.height)
             $tbody.height(options.height)
         else {
@@ -119,25 +72,6 @@
         }
     }
 
-    /*
-    $.fn.scrollYourTableBody = function(options) {
-        //var opts = [] //options ? options : {x:0} //jQuery.extend({}, options)
-        
-        ($this = $(this)).each(function() { fix_css($(this), opts) })
-
-        $(window).resize(function() {
-
-            $this.each(function() {
-                // Peek current table
-                adjust_header($(this), opts)
-            })
-            
-        }).resize() // Trigger resize handler
-
-        return $(this)
-    }
-    */
-    
     $.fn.ccsytb = function(options) {
         ($this = $(this)).each(function() {
             fix_css($(this), options)
